@@ -38,12 +38,7 @@ ui <- fluidPage(
 options(shiny.maxRequestSize=30*1024^2)
 server <- function(input, output, session) {
   imagen <- NULL
-  
-  
 
-  
-  
-  
   #### elementos experimentos photo ####
   obtenerpathfoto <- reactive({
     # browser()
@@ -104,11 +99,11 @@ server <- function(input, output, session) {
                    resfinal = "painting"
                  
                  else resfinal = "photograph"
-                 print(res)
+
                  
                  output$resultadofoto <- renderUI({
                    
-                   strfinal <- HTML(paste("<font size=+2>Classified as a <b>", resfinal, "</b> <br> Obtained score <b>", res, "</b></font>"))
+                   strfinal <- HTML(paste("<font size=+2>Classified as a <b>", resfinal, "</b> <br> Obtained score <b>", round(res, 4), "</b></font>"))
                    
                    
                    strfinal
@@ -139,11 +134,11 @@ server <- function(input, output, session) {
     if (modelo == "Simple Network")
     {
       ## cargar pesos red simple
-      redneuronal <- keras::load_model_hdf5("pesos/fotos/simple_bin_phvp16Adammejor.h5")
+      redneuronal <- keras::load_model_hdf5("pesos/fotos/simple_bin_phvp2.h5")
     }
     else if (modelo == "VGG-16 Network")
     {
-      # redneuronal <- keras::load_model_hdf5("pesos vgg")
+      redneuronal <- keras::load_model_hdf5("pesos/fotos/vgg16_bin_SGD_32_phpa.h5")
     }
     else
     {
@@ -169,7 +164,10 @@ server <- function(input, output, session) {
                  output$resultadofoto <- NULL
                })
   
-  
+  observeEvent(input$redfoto, 
+               {
+                 output$resultadofoto <- NULL
+               })
   #### elementos experimentos estilos ####
   
  
