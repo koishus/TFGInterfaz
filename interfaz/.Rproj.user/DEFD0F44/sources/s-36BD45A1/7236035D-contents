@@ -1,0 +1,118 @@
+# rm(list=ls())
+# setwd("***INSERT YOUR WORKING DIRECTORY HERE***")
+library(shiny)
+library(shinythemes)
+library(shinyjs)
+
+server <- function(input,output,session) {
+  
+  options(shiny.maxRequestSize=1500*1024^2)
+  session$onSessionEnded(function() {stopApp()})
+  
+  #INPUTS
+
+  output$actionButton <- renderUI({
+    actionButton("actionButton","Action button")
+  })
+  output$checkboxgroup <- renderUI({
+    checkboxGroupInput("checkBoxGroup","Group of check boxes", choices = c("Option 1", "Option 2", "Option 3"))
+  })
+  output$checkbox <- renderUI({
+    checkboxInput("checkBox","Single check box")
+  })
+  output$radiobutton <- renderUI({
+    radioButtons("radioButton","Radio buttons", choices = c("Option 1", "Option 2", "Option 3"))
+  })
+  output$dateinput <- renderUI({
+    dateInput("dateInput","Date")
+  })
+  output$daterangeinput <- renderUI({
+    dateRangeInput("daterangeinput","Date range")
+  })
+  output$numericinput <- renderUI({
+    numericInput("numericInput","Numeric input", 10, min = 0, max = 100, step = 1)
+  })
+  output$slider <- renderUI({
+    sliderInput("slider","Slider", min = 0, max = 1000, value = 500)
+  })
+  output$textinput <- renderUI({
+    textInput("textinput","Text input")
+  })
+  output$submitbutton <- renderUI({
+    submitButton("Submit button")
+  })
+  output$fileinput <- renderUI({
+    fileInput("fileinput","File input")
+  })
+  output$dropdown <- renderUI({
+    selectInput("dropdown","Input", choices = c("Option 1", "Option 2", "Option 3"))
+  })
+  
+}
+
+#USER INTERFACE CODE
+
+ui<- tagList(
+  useShinyjs(),fluidPage(theme = "theme.css", HTML("<link href='https://fonts.googleapis.com/css?family=Roboto+Slab' rel='stylesheet'>"),
+                         navbarPage(windowTitle="Shiny App", id="navbar", img(src="logo.svg", alt="Shiny App"),
+                                    
+                                    
+                                    tabPanel("Page One", value="page1",
+                                             column(4, class="shadow",
+                                                    h3("Date selectors and buttons"),
+                                                    uiOutput("dateinput"),
+                                                    uiOutput("daterangeinput")
+                                             ),
+                                             column(4, class="shadow",
+                                                    h3("Check boxes and radio buttons"),
+                                                    uiOutput("checkboxgroup"),
+                                                    uiOutput("checkbox"),
+                                                    uiOutput("radiobutton")
+                                             ),
+                                             column(4, class="shadow",
+                                                    h3("Numeric and text inputs"),
+                                                    uiOutput("numericinput"),
+                                                    uiOutput("slider"),
+                                                    uiOutput("textinput")
+                                             ),
+                                             column(8, class="shadow",
+                                                    tabsetPanel(
+                                                      tabPanel("Tab One",
+                                                               column(12,
+                                                                      h3("Pages on tabs"),
+                                                                      HTML("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")
+                                                               )
+                                                      ),
+                                                      tabPanel("Tab Two",
+                                                               column(12,
+                                                                      h3("Second tab"),
+                                                                      HTML("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")
+                                                               )
+                                                      )
+                                                    )
+                                             ),
+                                             column(4, class="shadow",
+                                                    h3("Buttons"),
+                                                    uiOutput("actionButton"),
+                                                    uiOutput("fileinput")
+                                             )
+                                    ),
+                                    
+                                    tabPanel("Page Two", value="page2",
+                                             sidebarLayout(
+                                               sidebarPanel(
+                                                 h4("Sidebar"),
+                                                 "This is an example of a page with a sidebar.",
+                                                 width = 3),
+                                               mainPanel(
+                                                 column(12, class="shadow",
+                                                        h3("Main page panel")
+                                                 )
+                                               )
+                                             )
+                                    )
+                         )
+  )
+)
+
+shinyApp(ui = ui, server = server)

@@ -2,8 +2,10 @@ library(shiny)
 library(keras)
 library(reticulate)
 library(imager)
+library(shinythemes)
+
 ui <- fluidPage(
-  
+  theme = shinythemes::shinytheme("yeti"),
   titlePanel("Painting Classification", windowTitle = "TFG"),
   # sidebarPanel(
   #   fileInput("file", "Load the image", accept = c('image/jpeg', 'image/png', 'image/jpg')),
@@ -81,44 +83,58 @@ server <- function(input, output, session) {
                { 
                  
                  modelo <- loadModelfoto()
-                 if(!dir.exists("1"))
+                 if (is.character(modelo))
                  {
-                   dir.create("1")
-                   dir.create("1/2")
-                 }
-                 # browser()
-                 # img = obtenerpath()
-                 # 
-                 # # img = load.image(path)
-                 # 
-                 # print(typeof(img))
-                 img <- imager::resize(imagenfoto, 224,224)
-                 
-                 imager::save.image(img, "1/2/picture.jpg")
-                 
-                 
-                 test <- flow_images_from_directory("1",
-                                                    target_size=c(224,224),
-                                                    batch_size = 32,
-                                                    class_mode = 'binary',
-                                                    shuffle = FALSE)
-                 resfinal = NULL
-                 res <- modelo %>%
-                   predict_generator(test, steps = 1)
-                 
-                 if (res <= 0.5)
-                   resfinal = "painting"
-                 
-                 else resfinal = "photograph"
-
-                 
-                 output$resultadofoto <- renderUI({
-                   
-                   strfinal <- HTML(paste("<font size=+2>Classified as a <b>", resfinal, "</b> <br> Obtained score <b>", round(res, 4), "</b></font>"))
-                   
-                   
-                   strfinal
+                   output$resultadofoto <- renderUI({
+                     
+                     # strfinal <- HTML(paste("<font size=+2>Classified as a <b>", resfinal, "</b> <br> Obtained score <b>", round(res, 4), "</b></font>"))
+                     strfinal <- HTML(paste("<font size=+2> Work in progress!! UwU</font>"))
+                     
+                     strfinal
                    })
+                 }
+                 else
+                 {
+                   if(!dir.exists("1"))
+                   {
+                     dir.create("1")
+                     dir.create("1/2")
+                   }
+                   # browser()
+                   # img = obtenerpath()
+                   # 
+                   # # img = load.image(path)
+                   # 
+                   # print(typeof(img))
+                   img <- imager::resize(imagenfoto, 224,224)
+                   
+                   imager::save.image(img, "1/2/picture.jpg")
+                   
+                   
+                   test <- flow_images_from_directory("1",
+                                                      target_size=c(224,224),
+                                                      batch_size = 32,
+                                                      class_mode = 'binary',
+                                                      shuffle = FALSE)
+                   resfinal = NULL
+                   res <- modelo %>%
+                     predict_generator(test, steps = 1)
+                   
+                   if (res <= 0.5)
+                     resfinal = "painting"
+                   
+                   else resfinal = "photograph"
+                   
+                   
+                   output$resultadofoto <- renderUI({
+                     
+                     strfinal <- HTML(paste("<font size=+2>Classified as a <b>", resfinal, "</b> <br> Obtained score <b>", round(res, 4), "</b></font>"))
+                     
+                     
+                     strfinal
+                   })
+                 }
+                 
                }
                
                
@@ -154,6 +170,7 @@ server <- function(input, output, session) {
     else
     {
       # redneuronal <- # keras::load_model_hdf5("pesos resnet")
+      redneuronal <- "uwu"
     }
     
     return(redneuronal)
