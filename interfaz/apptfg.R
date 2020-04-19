@@ -115,13 +115,14 @@ server <- function(input, output, session) {
                  
                  else resfinal = "photograph"
                  
-                 
+                 k_clear_session()
                  output$resultadofoto <- renderUI({
                    
-                   strfinal <- HTML(paste("<font size=+2>Classified as a <b>", resfinal, "</b> <br> Obtained score <b>", round(res, 4), "</b></font>"))
+                   HTML(paste("<font size=+2>Classified as a <b>", resfinal, "</b> <br> Obtained score <b>", round(res, 4), "</b></font>"))
+                 
                    
                    
-                   strfinal
+                   
                  })
                
                
@@ -225,31 +226,98 @@ server <- function(input, output, session) {
   observeEvent(input$botoncargapaint,
                { 
                  
-                 # modelo <- loadModelpaint()
-                
-                 # 
-                 # 
-                 # test <- flow_images_from_directory("1",
-                 #                                    target_size=c(224,224),
-                 #                                    batch_size = 32,
-                 #                                    class_mode = 'binary',
-                 #                                    shuffle = FALSE)
-                 # resfinal = NULL
-                 # res <- modelo %>%
-                 #   predict_generator(test, steps = 1)
-                 # 
+               modelo <- loadModelpaint()
+
+
+                 test <- flow_images_from_directory("1",
+                                target_size=c(224,224),
+                                   batch_size = 32,
+                                  class_mode = 'binary',
+                                  shuffle = FALSE)
+                 resfinal = NULL
+                 res <- modelo %>%
+                    predict_generator(test, steps = 1)
+                 #
                  # # este if cambiarlo dependiendo del resultado obtenido, 16 clases, el valor irá de 0 a 15
                  # # if (res <= 0.5)
                  # #   resfinal = "painting"
-                 # # 
+                 # #
                  # # else resfinal = "photograph"
-                
+                 res <- which.max(res)-1
+                 if (res == 0)
+                 {
+                   resfinal = "Abstract Expressionism"
+                 }
+                 else if (res == 1)
+                 {
+                   resfinal = "Art Nouveau (Modern)"
+                 }
+                 else if (res == 2)
+                 {
+                   resfinal = "Baroque"
+                 }
+                 else if (res == 3)
+                 {
+                   resfinal = "Cubism"
+                 }
+                 else if (res == 4)
+                 {
+                   resfinal = "Early Renaissance"
+                 }
+                 else if (res == 5)
+                 {
+                   resfinal = "Expressionism"
+                 }
+                 else if (res == 6)
+                 {
+                   resfinal = "Impressionism"
+                 }
+                 else if (res == 7)
+                 {
+                   resfinal = "Mannerism (Late Renaissance)"
+                 }
+                 else if (res == 8)
+                 {
+                   resfinal = "Naïve Art (Primitivism)"
+                 }
+                 else if (res == 9)
+                 {
+                   resfinal = "Northern Renaissance"
+                 }
+                 else if (res == 10)
+                 {
+                   resfinal = "Post Impressionism"
+                 }
+                 
+                 else if (res == 11)
+                 {
+                   resfinal = "Realism"
+                 }#
+                 else if (res == 12)
+                 {
+                   resfinal = "Rococo"
+                 }
+                 else if (res == 13)
+                 {
+                   resfinal = "Romanticism"
+                 }
+                 else if (res == 14)
+                 {
+                   resfinal = "Surrealism"
+                 }
+                 else if (res == 15)
+                 {
+                   resfinal = "Symbolism"
+                 }
+                 k_clear_session()
                  output$resultadopaint <- renderUI({
                    
+                   HTML(paste("<font size=+2>Classified as <b>", resfinal, "</b></font>"))
                    # strfinal <- HTML(paste("<font size=+2>Classified as a <b>", resfinal, "</b> <br> Obtained score <b>", round(res, 4), "</b></font>"))
-                   strfinal <- HTML(paste("<font size=+2> Work in progress!! UwU</font>"))
+                   # strfinal <- HTML(paste("<font size=+2> Work in progress!! UwU</font>"))
                    
-                   strfinal
+                   # strfinal
+                   
                  })
                }
                
@@ -277,7 +345,7 @@ server <- function(input, output, session) {
     if (modelo == "Simple Network")
     {
       ## cargar pesos red simple
-      # redneuronal <- keras::load_model_hdf5("pesos/estilos/simple")
+      redneuronal <- keras::load_model_hdf5("pesos/estilos/simplemulti.h5")
     }
     else if (modelo == "VGG-16 Network")
     {
