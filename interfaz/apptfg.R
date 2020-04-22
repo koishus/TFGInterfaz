@@ -108,7 +108,8 @@ server <- function(input, output, session) {
                                                     target_size=c(224,224),
                                                     batch_size = 32,
                                                     class_mode = 'binary',
-                                                    shuffle = FALSE)
+                                                    shuffle = FALSE
+                                                    )
                  resfinal = NULL
                  res <- modelo %>%
                    predict_generator(test, steps = 1)
@@ -438,7 +439,7 @@ server <- function(input, output, session) {
     }
     else if (modelo == "VGG-16 Network")
     {
-      # redneuronal <- keras::load_model_hdf5("pesos/estilos/vgg")
+      redneuronal <- keras::load_model_hdf5("pesos/estilos/vgg.h5")
     }
     else
     {
