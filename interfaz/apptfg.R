@@ -111,22 +111,130 @@ server <- function(input, output, session) {
                                                     shuffle = FALSE
                                                     )
                  resfinal = NULL
-                 res <- modelo %>%
+                 resphoto <- modelo %>%
                    predict_generator(test, steps = 1)
                  
-                 if (res <= 0.5)
+                 if (resphoto <= 0.5)
                    resfinal = "painting"
                  
                  else resfinal = "photograph"
                  
                  k_clear_session()
+                 
+                 if (resfinal == "painting")
+                 {
+                   modelo <- keras::load_model_hdf5("pesos/estilos/vgg.h5")
+                   test <- flow_images_from_directory("1",
+                                                      target_size=c(224,224),
+                                                      batch_size = 32,
+                                                      class_mode = 'categorical',
+                                                      shuffle = FALSE
+                   )
+                   
+                   res2 <- modelo %>%
+                     predict_generator(test, steps = 1)
+                   
+                   clases <- whichpartrev(res2)
+                   clastop5 <- c()
+                   
+                   for (res in 1:length(clases))
+                   {
+                     if ((clases[res] - 1) == 0)
+                     {
+                       resf = "Abstract Expressionism"
+                     }
+                     else if ((clases[res] - 1)  == 1)
+                     {
+                       resf = "Art Nouveau (Modern)"
+                     }
+                     else if ((clases[res] - 1)  == 2)
+                     {
+                       resf = "Baroque"
+                     }
+                     else if ((clases[res] - 1)  == 3)
+                     {
+                       resf = "Cubism"
+                     }
+                     else if ((clases[res] - 1)  == 4)
+                     {
+                       resf = "Early Renaissance"
+                     }
+                     else if ((clases[res] - 1)  == 5)
+                     {
+                       resf = "Expressionism"
+                     }
+                     else if ((clases[res] - 1)  == 6)
+                     {
+                       resf = "Impressionism"
+                     }
+                     else if ((clases[res] - 1)  == 7)
+                     {
+                       resf = "Mannerism (Late Renaissance)"
+                     }
+                     else if ((clases[res] - 1)  == 8)
+                     {
+                       resf = "Naïve Art (Primitivism)"
+                     }
+                     else if ((clases[res] - 1) == 9)
+                     {
+                       resf = "Northern Renaissance"
+                     }
+                     else if ((clases[res] - 1)  == 10)
+                     {
+                       resf = "Post Impressionism"
+                     }
+                     
+                     else if ((clases[res] - 1) == 11)
+                     {
+                       resf = "Realism"
+                     }#
+                     else if ((clases[res] - 1) == 12)
+                     {
+                       resf = "Rococo"
+                     }
+                     else if ((clases[res] - 1) == 13)
+                     {
+                       resf = "Romanticism"
+                     }
+                     else if ((clases[res] - 1) == 14)
+                     {
+                       resf = "Surrealism"
+                     }
+                     else if ((clases[res] - 1) == 15)
+                     {
+                       resf = "Symbolism"
+                     }
+                     
+                     clastop5 <- c(clastop5, resf)
+                   }
+                   
+                 }
+                 
+                 k_clear_session()
+                 
                  output$resultadofoto <- renderUI({
                    
-                   HTML(paste("<font size=+2>Classified as a <b>", resfinal, "</b> <br> Obtained score <b>", round(res, 4), "</b></font>"))
-                 
+                   strf <- HTML(paste("Classified as a <b>", resfinal, "</b> <br> Obtained score <b>", round(resphoto, 4), "</b><br>"))
                    
-                   
-                   
+               
+                   if (resfinal == "painting")
+                   {
+                     str1 <- "Possible styles:<br>"
+                     str2 <- "<ul>"
+                     
+                     for (clase in clastop5)
+                     {
+                       str2 <- paste(str2, "<li>", clase, "</li>")
+                     }
+                     str2 <- paste0(str2, "</ul>")
+                     
+                     HTML(paste0(strf, str1, str2))
+                   }
+                   else
+                   {
+                     HTML(strf)
+                   }
+
                  })
                
                
@@ -236,17 +344,12 @@ server <- function(input, output, session) {
                  test <- flow_images_from_directory("1",
                                 target_size=c(224,224),
                                    batch_size = 32,
-                                  class_mode = 'binary',
+                                  class_mode = 'categorical',
                                   shuffle = FALSE)
                  resfinal = NULL
                  cla <- modelo %>%
                     predict_generator(test, steps = 1)
-                 #
-                 # # este if cambiarlo dependiendo del resultado obtenido, 16 clases, el valor irá de 0 a 15
-                 # # if (res <= 0.5)
-                 # #   resfinal = "painting"
-                 # #
-                 # # else resfinal = "photograph"
+
                  
                  clases <- whichpartrev(cla)
                  clastop5 <- c()
@@ -322,74 +425,6 @@ server <- function(input, output, session) {
                    clastop5 <- c(clastop5, resfinal)
                  }
                  
-                 res <- which.max(cla)-1
-                 
-                 resfinal <- NULL
-                 if (res == 0)
-                 {
-                   resfinal = "Abstract Expressionism"
-                 }
-                 else if (res == 1)
-                 {
-                   resfinal = "Art Nouveau (Modern)"
-                 }
-                 else if (res == 2)
-                 {
-                   resfinal = "Baroque"
-                 }
-                 else if (res == 3)
-                 {
-                   resfinal = "Cubism"
-                 }
-                 else if (res == 4)
-                 {
-                   resfinal = "Early Renaissance"
-                 }
-                 else if (res == 5)
-                 {
-                   resfinal = "Expressionism"
-                 }
-                 else if (res == 6)
-                 {
-                   resfinal = "Impressionism"
-                 }
-                 else if (res == 7)
-                 {
-                   resfinal = "Mannerism (Late Renaissance)"
-                 }
-                 else if (res == 8)
-                 {
-                   resfinal = "Naïve Art (Primitivism)"
-                 }
-                 else if (res == 9)
-                 {
-                   resfinal = "Northern Renaissance"
-                 }
-                 else if (res == 10)
-                 {
-                   resfinal = "Post Impressionism"
-                 }
-                 
-                 else if (res == 11)
-                 {
-                   resfinal = "Realism"
-                 }#
-                 else if (res == 12)
-                 {
-                   resfinal = "Rococo"
-                 }
-                 else if (res == 13)
-                 {
-                   resfinal = "Romanticism"
-                 }
-                 else if (res == 14)
-                 {
-                   resfinal = "Surrealism"
-                 }
-                 else if (res == 15)
-                 {
-                   resfinal = "Symbolism"
-                 }
                  
                  
                  k_clear_session()
@@ -403,9 +438,9 @@ server <- function(input, output, session) {
                       str2 <- paste(str2, "<li>", clase, "</li>")
                     }
                     str2 <- paste0(str2, "</ul>")
-                    str3 <- paste0("Style with highest probability score:<br><b>", resfinal)
-                    
-                    strfinal <- paste(str1, str2, str3)
+                    # str3 <- paste0("Style with highest probability score:<br><b>", resfinal)
+                    # 
+                    strfinal <- paste(str1, str2)
                     
                     HTML(strfinal)
                  })
