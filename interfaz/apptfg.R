@@ -40,6 +40,7 @@ ui <- fluidPage(
                            plotOutput("imagencfoto"),
                            # verbatimTextOutput("modelosel"),
                            htmlOutput("resultadofoto")
+                           
                          ))
                 )
     
@@ -135,6 +136,7 @@ server <- function(input, output, session) {
                      predict_generator(test, steps = 1)
                    
                    clases <- whichpartrev(res2)
+                   
                    clastop5 <- c()
                    
                    for (res in 1:length(clases))
@@ -204,6 +206,7 @@ server <- function(input, output, session) {
                      {
                        resf = "Symbolism"
                      }
+                     
                      
                      clastop5 <- c(clastop5, resf)
                    }
@@ -421,6 +424,8 @@ server <- function(input, output, session) {
                    {
                      resfinal = "Symbolism"
                    }
+                   
+                   
                    
                    clastop5 <- c(clastop5, resfinal)
                  }
