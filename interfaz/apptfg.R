@@ -330,7 +330,7 @@ server <- function(input, output, session) {
   
   output$seleccionredpaint <- renderUI({
     if (is.null(obtenerpathpaint())) {return()}
-    selectInput("redpaint", "Choose the model to use", c("Simple Network", "VGG-16 Network", "ResNet-50 Network"))
+    selectInput("redpaint", "Choose the model to use", c("Simple Network", "VGG-16 Network"))
   })
   
   output$botoncargarpesopaint <- renderUI({
@@ -481,10 +481,10 @@ server <- function(input, output, session) {
     {
       redneuronal <- keras::load_model_hdf5("pesos/estilos/vgg.h5")
     }
-    else
-    {
-      redneuronal <- keras::load_model_hdf5("pesos/estilos/resnet.h5")
-    }
+    # else
+    # {
+    #   redneuronal <- keras::load_model_hdf5("pesos/estilos/resnet.h5")
+    # }
     
     return(redneuronal)
   })
