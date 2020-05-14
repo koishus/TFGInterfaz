@@ -1,6 +1,7 @@
 library(shiny)
 library(keras)
 library(reticulate)
+
 library(imager)
 library(shinythemes)
 library(purrr)
@@ -74,7 +75,7 @@ server <- function(input, output, session) {
   imagebase <- NULL
   imagestyle <- NULL
   
-  
+  tensorflow::tf$compat$v1$disable_eager_execution()
   #### funciones importadas de neural_style_transfer ####
   total_variation_weight <- 1
   style_weight <- 1
@@ -263,7 +264,7 @@ server <- function(input, output, session) {
                  
                  if (resfinal == "painting")
                  {
-                   modelo <- keras::load_model_hdf5("pesos/estilos/vgg.h5")
+                   modelo <- load_model_hdf5("pesos/estilos/vgg.h5")
                    test <- flow_images_from_directory("1",
                                                       target_size=c(224,224),
                                                       batch_size = 32,
@@ -406,15 +407,15 @@ server <- function(input, output, session) {
     if (modelo == "Simple Network")
     {
       ## cargar pesos red simple
-      redneuronal <- keras::load_model_hdf5("pesos/fotos/simple_bin_phvp2.h5")
+      redneuronal <- load_model_hdf5("pesos/fotos/simple_bin_phvp2.h5")
     }
     else if (modelo == "VGG-16 Network")
     {
-      redneuronal <- keras::load_model_hdf5("pesos/fotos/vgg16_bin_SGD_32_phpa.h5")
+      redneuronal <- load_model_hdf5("pesos/fotos/vgg16_bin_SGD_32_phpa.h5")
     }
     else
     {
-      redneuronal <- keras::load_model_hdf5("pesos/fotos/resnet_phvp.h5")
+      redneuronal <- load_model_hdf5("pesos/fotos/resnet_phvp.h5")
     }
     
     return(redneuronal)
@@ -614,11 +615,11 @@ server <- function(input, output, session) {
     if (modelo == "Simple Network")
     {
       ## cargar pesos red simple
-      redneuronal <- keras::load_model_hdf5("pesos/estilos/simplemulti.h5")
+      redneuronal <- load_model_hdf5("pesos/estilos/simplemulti.h5")
     }
     else if (modelo == "VGG-16 Network")
     {
-      redneuronal <- keras::load_model_hdf5("pesos/estilos/vgg.h5")
+      redneuronal <- load_model_hdf5("pesos/estilos/vgg.h5")
     }
     # else
     # {
@@ -722,7 +723,7 @@ server <- function(input, output, session) {
                    return()
                  }
                  output$imgstyle <- NULL
-                 tensorflow::tf$compat$v1$disable_eager_execution()
+                 
                  iterations <- input$iterations
                  print(iterations)
                  img <- image_load(imagebase)
@@ -748,8 +749,11 @@ server <- function(input, output, session) {
                  
                  # model creation
                  
-                 model <- application_vgg16(input_tensor = input_tensor, weights = "pesos_vgg_impbar.h5", 
+                 model <- application_vgg16(input_tensor = input_tensor, weights = "pesos_vgg_photo.h5",
                                             include_top = FALSE)
+
+                 
+                 # model <- load_model_hdf5("pesos_vgg_model.h5")
                  
                  nms <- map_chr(model$layers, ~.x$name)
                  output_dict <- map(model$layers, ~.x$output) %>% set_names(nms)
@@ -796,7 +800,7 @@ server <- function(input, output, session) {
                  im <- NULL
                  imageaux <- NULL
                 # TODO: arreglar tiempo
-                 withProgress(message = "Generating combined picture", value=0, style = "notification",{
+                 withProgress(message = "Generating combined picture", value=0, max = iterations/10, style = "notification",{
                    for(i in 1:iterations){
                      incProgress(0.1, detail = paste0("Iteration: ", i,"/", iterations))
                      # Run L-BFGS
